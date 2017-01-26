@@ -32,7 +32,7 @@ library(ISLR)
 
 ```{r}
 task5top <- Auto[c(1:5), c(1:3)]
-#task5bottom < - Auo
+task5bottom <- Auto[c(388:392), c(7:9)]
 ```
 
 ### Task 6
@@ -44,5 +44,5 @@ library(scoreActivity)
 ## Test statements
 
 ```{r}
-#scoreActivity::score253(2)
+scoreActivity::score253(2)
 ```

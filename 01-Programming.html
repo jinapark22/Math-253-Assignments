@@ -126,19 +126,52 @@ $(document).ready(function () {
 </div>
 <div id="task-1" class="section level2">
 <h2>Task 1</h2>
-<pre class="r"><code>library(mosaicData)</code></pre>
+<pre class="r"><code>library(mosaic)</code></pre>
+<pre><code>## Loading required package: dplyr</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
+<pre><code>## Loading required package: car</code></pre>
+<pre><code>## 
+## Attaching package: 'car'</code></pre>
+<pre><code>## The following object is masked from 'package:dplyr':
+## 
+##     recode</code></pre>
+<pre><code>## Loading required package: mosaicData</code></pre>
+<pre><code>## 
+## Attaching package: 'mosaic'</code></pre>
+<pre><code>## The following object is masked from 'package:car':
+## 
+##     logit</code></pre>
+<pre><code>## The following objects are masked from 'package:dplyr':
+## 
+##     count, do, tally</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     binom.test, cor, cov, D, fivenum, IQR, median, prop.test,
+##     quantile, sd, t.test, var</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     max, mean, min, prod, range, sample, sum</code></pre>
 </div>
 <div id="task-2" class="section level2">
 <h2>Task 2</h2>
-<pre class="r"><code>task2 = paste('Today is', date())
+<pre class="r"><code>task2 &lt;- paste('Today is', date())
 task2</code></pre>
-<pre><code>## [1] &quot;Today is Wed Jan 25 20:07:52 2017&quot;</code></pre>
+<pre><code>## [1] &quot;Today is Thu Jan 26 15:25:06 2017&quot;</code></pre>
 </div>
 <div id="task-3" class="section level2">
 <h2>Task 3</h2>
-<pre class="r"><code>task3a = names(Galton)
-task3b = nrow(Galton)
-task3c = mean(Galton$height)
+<pre class="r"><code>task3a &lt;- names(Galton)
+task3b &lt;- nrow(Galton)
+task3c &lt;- mean(Galton$height)
 task3a</code></pre>
 <pre><code>## [1] &quot;family&quot; &quot;father&quot; &quot;mother&quot; &quot;sex&quot;    &quot;height&quot; &quot;nkids&quot;</code></pre>
 <pre class="r"><code>task3b</code></pre>
@@ -148,7 +181,7 @@ task3a</code></pre>
 </div>
 <div id="task-4" class="section level2">
 <h2>Task 4</h2>
-<pre class="r"><code>task4 = matrix(c(1,2,3,4,5,6), nrow=2, ncol=3, byrow = TRUE)
+<pre class="r"><code>task4 &lt;- matrix(c(1,2,3,4,5,6), nrow=2, ncol=3, byrow = TRUE)
 task4</code></pre>
 <pre><code>##      [,1] [,2] [,3]
 ## [1,]    1    2    3
@@ -156,15 +189,28 @@ task4</code></pre>
 </div>
 <div id="task-5" class="section level2">
 <h2>Task 5</h2>
-<pre class="r"><code>task5x = runif(1000, 0, 1)
-task5y = runif(1000, 0, 1)
-taskpi = sqrt(task5x^2 + task5y^2)
-sum(taskpi &lt;= 1.0)/1000 #The fraction of the length to origin that is &lt;= 1.</code></pre>
-<pre><code>## [1] 0.791</code></pre>
+<pre class="r"><code>task5x &lt;- runif(1000, 0, 1)
+task5y &lt;- runif(1000, 0, 1)
+taskpi &lt;- sqrt(task5x^2 + task5y^2)
+task5pi &lt;- (sum(taskpi &lt;= 1.0)/1000) * 4 #The fraction of the length to origin that is &lt;= 1.</code></pre>
 </div>
 <div id="test-statements" class="section level2">
 <h2>Test statements</h2>
-<pre class="r"><code>#scoreActivity::score253(1)</code></pre>
+<pre class="r"><code>scoreActivity::score253(1)</code></pre>
+<pre><code>## --------
+## Running test statements for day  01</code></pre>
+<pre><code>## Loading required package: scoreActivity</code></pre>
+<pre><code>## Loading required package: lazyeval</code></pre>
+<pre><code>## passed: &quot;package:mosaic&quot; %in% search()
+## passed: is.character(task2)
+## passed: grepl(&quot;^Today is&quot;, task2) &amp;&amp; grepl(&quot;201.$&quot;, task2)
+## passed: all(task3a %in% names(mosaicData::Galton))
+## passed: task3b
+## passed: task3c
+## passed: all(dim(task4) == c(2, 3))
+## passed: max(task5x) &lt;= 1 &amp;&amp; min(task5x) &gt;= 0
+## passed: max(task5y) &lt;= 1 &amp;&amp; min(task5y) &gt;= 0
+## passed: task5pi</code></pre>
 </div>
 </div>
 

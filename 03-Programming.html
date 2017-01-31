@@ -147,15 +147,15 @@ Test_data &lt;- College[test_indices, ]</code></pre>
 </div>
 <div id="task-5" class="section level2">
 <h2>Task 5</h2>
-<pre class="r"><code>Y_train = Train_data$Yield
-fhat_train = predict(Yield_mod1, newdata = Train_data)
-MSE_train = mean((Y_train - fhat_train)^2)</code></pre>
+<pre class="r"><code>Y_train &lt;- Train_data$Yield
+fhat_train &lt;- predict(Yield_mod1, newdata = Train_data)
+MSE_train &lt;- mean((Y_train - fhat_train)^2)</code></pre>
 </div>
 <div id="task-6" class="section level2">
 <h2>Task 6</h2>
-<pre class="r"><code>Y_test = Test_data$Yield
-fhat_test = predict(Yield_mod1, newdata = Test_data)
-MSE_test = mean((Y_test - fhat_test)^2)</code></pre>
+<pre class="r"><code>Y_test &lt;- Test_data$Yield
+fhat_test &lt;- predict(Yield_mod1, newdata = Test_data)
+MSE_test &lt;- mean((Y_test - fhat_test)^2)</code></pre>
 </div>
 <div id="test-statements" class="section level2">
 <h2>Test statements</h2>

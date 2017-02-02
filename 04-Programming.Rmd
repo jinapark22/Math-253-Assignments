@@ -1,8 +1,32 @@
 # In-Class Programming Activity, Day 4
+# Jina Park
 
-Your work goes here ...
+## Task 1 and 2
+```{r}
+plot(1, xlim = c(0, 100), ylim = c(0, 100), type = "n")
+x1 <- c(0, 100, 100, 0)
+x2 <- c(0, 100, 100, 0, 0)
+y1 <- c(0, 0, 100, 100)
+y2 <- c(0, 0, 100, 100, 0)
+lines(x2, y2, col="aquamarine")
+```
 
-
+## Task 3
+```{r}
+plot(1, xlim = c(0, 100), ylim = c(0, 100), type = "n", asp =1)
+angles <- seq(0, 2*pi, length= 100)
+x3 <- 20*cos(angles) + 50
+y3 <- 20*sin(angles) + 60
+lines(x3,y3)
+```
+## Task 4
+```{r}
+plot(1, xlim = c(0, 100), ylim = c(0, 100), type = "n", asp =1)
+angles <- seq(0, 2*pi, length= 100)
+x4 <- 20 * abs(sin(angles)) * cos(angles) + 50
+y4 <- 20 * abs(sin(angles)) *sin(angles) + 60
+polygon(x4, y4, col="red")
+```
 
 ## Test statements
 

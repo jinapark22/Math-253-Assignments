@@ -1,8 +1,64 @@
 # In-Class Programming Activity, Day 5
+# Jina Park
 
-Your work goes here ...
+## Task 1
+```{r}
+library(mosaicData)
+nbins = 10
+```
 
+## Task 2
+```{r}
+evenly_spaced = seq(min(Galton$height), max(Galton$height), length=nbins + 1)
+evenly_spaced
+```
 
+## Task 3
+```{r}
+bin_counts = table(cut(Galton$height, breaks = evenly_spaced))
+
+```
+
+## Task 4
+```{r}
+xL = evenly_spaced[-11]
+xR = evenly_spaced[-1]
+count = as.numeric(bin_counts)
+hist_basics = data.frame(xL, xR, count)
+```
+
+## Task 5
+```{r}
+make_one_bar <- function(point) {
+  xLeft <- point$xL
+  xRight <- point$xR
+  height <- point$count
+  res <- data.frame(
+    x = c(xLeft, xLeft, xRight, xRight, NA), 
+    y = c(    0, height, height,     0, NA)
+  )
+  res
+}
+
+#========
+one_to_five <- function(hist_data) {
+  bars <- NULL
+  for (k in 1:nrow(hist_data)) {
+    new_bar <- make_one_bar(hist_data[k, ])
+    bars <- rbind(bars, new_bar)
+  }
+  bars
+}
+
+My_bars = one_to_five(hist_basics)
+```
+
+## Task 6
+```{r}
+plot(My_bars, type="n")
+lines(My_bars)
+polygon(My_bars, col="red")
+```
 
 ## Test statements
 

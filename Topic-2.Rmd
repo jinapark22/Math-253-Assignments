@@ -1,2 +1,256 @@
 # Topic 2 Exercises: Linear Regression
+# Jina Park
+
+## Work through 3.6
+### 3.6.1 Libraries
+```{r}
+library(MASS)
+library(ISLR)
+```
+
+### 3.6.2 Simple Linear Regression
+```{r}
+names(Boston)
+lm.fit = lm(medv ~ lstat, data=Boston)
+with(Boston, lm(medv~lstat))  #--> Look for alternatives
+summary(lm.fit)
+```
+
+```{r}
+names(lm.fit)
+coef(lm.fit)
+confint(lm.fit)
+```
+
+```{r}
+predict(lm.fit, data.frame(lstat = (c(5,10,15))), interval = "confidence")
+predict(lm.fit, data.frame(lstat = c(5,10,15)), interval = "prediction")
+plot(lstat, medv)
+abline(lm.fit)
+abline(lm.fit, lwd=3)
+abline(lm.fit, lwd=3, col="red")
+plot(lstat, medv, col="red")
+plot(lstat, medv, pch=20)
+plot(lstat, medv, pch="+")
+plot(1:20, 1:20, pch=1:20)
+```
+
+```{r}
+par(mfrow = c(2,2))
+plot(lm.fit)
+```
+
+```{r}
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+
+### 3.6.3 Multiple Linear Regression
+
+```{r}
+lm.fit = lm(medv~lstat+age, data=Boston)
+summary(lm.fit)
+```
+
+```{r}
+lm.fit = lm(medv~., data=Boston)
+summary(lm.fit)
+```
+
+```{r}
+library(car)
+vif(lm.fit)
+```
+
+```{r}
+lm.fit1 = lm(medv~.-age, data=Boston)
+summary(lm.fit1)
+lm.fit1 = update(lm.fit, ~.-age)
+```
+
+### 3.6.4 Interaction Terms
+
+```{r}
+summary(lm(medv~lstat*age, data=Boston))
+```
+
+### 3.6.5 Non-linear Transformations of the Predictors
+
+```{r}
+lm.fit2 = lm(medv~lstat+lstat+I(lstat^2))
+summary(lm.fit2)
+lm.fit = lm(medv~lstat)
+anova(lm.fit, lm.fit2)
+```
+
+```{r}
+par(mfrow = c(2,2))
+plot(lm.fit2)
+lm.fit5=lm(medv~poly(lstat,5))
+summary(lm.fit5)
+summary(lm(medv~log(rm), data=Boston))
+```
+
+### 3.6.6 Qualitative Predictors
+
+```{r}
+#fix(Carseats)
+names(Carseats)
+```
+
+```{r}
+lm.fit = lm(Sales ~ . + Income : Advertising + Price:Age, data=Carseats)
+summary(lm.fit)
+```
+
+```{r}
+with(Carseats, contrasts(ShelveLoc)) 
+```
+
+### 3.6.7 Writing Functions
+
+```{r}
+#LoadLibraries
+#LoadLibraries()
+```
+
+```{r}
+LoadLibraries = function() {
+  library(ISLR)
+  library(MASS)
+  print("The libraries have been loaded.")
+}
+```
+
+```{r}
+LoadLibraries
+function() {
+  library(ISLR)
+  library(MASS)
+  print("The libraries have been loaded.")
+}
+
+LoadLibraries()
+```
+
+## ISL 3.7.13.
+(a)
+```{r}
+set.seed(1)
+x <- rnorm(100, mean = 0, sd = 1) 
+```
+
+(b)
+```{r}
+eps <- rnorm(100, mean = 0, sd = sqrt(0.25))
+```
+
+(c) The coefficient for the intercept (Beta 0) is -1 and the coefficient for the slope (Beta 1) is 0.5.
+```{r}
+y <- -1 + 0.5*x + eps
+length(y)
+```
+
+(d) According to the scatterplot of x and y, there appears to be a fairly linear relationship between the two variables. There is some variability in the points due to the error term.
+```{r}
+plot(x, y)
+```
+(e)
+```{r}
+fit1 <- lm(y~x)
+summary(fit1)
+```
+Since the p-value on both the intercept and x is really small (2e-16 and 4.58e-15, respectively), the null hypothesis can be rejected. 
+
+The predicted values for B0 and B1 (-1.019 and 0.49947) are very close to the actual B0 and B1 (-1 and 0.5).
+
+(f) 
+```{r}
+plot(x, y)
+abline(fit1, col="red")
+abline(-1, 0.5, col="blue")
+legend("bottomright", c("Least Squares", "Population Regression"), col=c("red", "blue"), lty=c(1,1))
+```
+
+(g)
+```{r}
+n = lm(y ~ x + I(x^2))
+summary(n)
+```
+
+Since the coefficient on x^2 is not significant at the 5% level with a p-value of 0.164, there is not enough evidence that the quadratic term improves the model fit.
+
+(h)
+```{r}
+set.seed(1)
+x <- rnorm(100)
+eps <- rnorm(100, mean = 0, sd = 0.125)
+y <- -1 + 0.5*x + eps
+plot(x,y)
+fit2 <- lm(y ~ x)
+summary(fit2)
+```
+
+```{r}
+plot(x, y)
+abline(fit2, col="red")
+abline(-1, 0.5, col="blue")
+legend("bottomright", c("Least Square Regression", "Population Regression"), col=c("red", "blue"), lty=c(1,1))
+```
+After decreasing the standard deviation and variance to create less noise in the data, the intercept is closer to -1 and the coefficient of x is closer to 0.5. The R-squared  and adjusted R-squared values are also much closer to 1 whereas the residual standard error is smaller.
+
+!!!(i)
+```{r}
+set.seed(1)
+x <- rnorm(100)
+eps <- rnorm(100, sd=0.5)
+y <- -1 + 0.5*x + eps
+plot(x, y)
+fit3 <- lm(y~x)
+summary(fit3)
+```
+```{r}
+plot(x,y)
+abline(fit3, col="red")
+abline(-1, 0.5, col="blue")
+legend("bottomright", c("Least Squares Regression", "Population Regression"), col=c("red", "blue"), lty=c(1,1))
+```
+After increasing the standard deviation and variance to create more noise in the data, the intercept is still quite close to -1 and the coefficient of x is also very close to 0.5. However, the relationship between x and y is less linear than when there was less noise in the data. The R-squared  and adjusted R-squared values are also much lower than their respective values with less noise whereas the residual standard error is greater.
+
+(j)
+```{r}
+confint(fit1)
+confint(fit2)
+confint(fit3)
+```
+
+The confidence interval for B0 for the original data set is [-1.115, -0.9226] and the confidence interval for B1 is [0.3926, 0.6064]. The confidence interval for B0 for the less noisy set is [-1.0288, -0.9807] and the confidence interval for B1 is [0.4731, 0.5266]. The confidence interval for B0 for the more noisy set is [-1.1151, -0.9226] and the confidence interval for B1 is [0.3926, 0.6064].
+
+## Reading Quesitons 
+(1) On p.66, the authors state, "This is clearly not true in Fig. 3.1" Explain why.
+
+The authors are saying that the errors for each observation are uncorrelated with the common variance in Figure 3.1. This is because if the errors are uncorrelated, the fact that the error of i is positive provides little to no information about the sign of the error of i + 1. However, if we look at Figure 3.1, the errors for each observation appears slightly correlated with the common variance.
+
+(2) On p.77, the authors state, "In this case, we cannot even fit the multiple regression models using least squares..." Explain why.
+
+If the number of parameters is greater than the number of observations (p > n), then there are more coefficients to estimate than observations from which to estimate them. Because of this, if we have a very large number of variables, we cannot fit the multiple linear regression using least squares.
+
+
+## ISL 3.7.3
+(a) The correct answer is (iv). This is because the regression equation for males is $yhat = 50 + 20GPA + 0.07IQ + 0.01GPA*IQ$ and the regression for females is $yhat = 85 + 10GPA + 0.07IQ + 0.01GPA*IQ$. In order for males to have a higher starting salary after gradution, their regression equation must be greater than the regression equation for females. If we simplify the equations, we get: $$50 + 20GPA > 85 + 10GPA$$ $$10GPA > 35$$ $$GPA > 3.5$$ This means that the males will have a higher starting salary than females as long as their GPA is greater than 3.5.
+
+(b) $$yhat = 85 + 10GPA + 0.07IQ + 0.01GPA*IQ$$
+$$yhat = 85 + 10(4.0) + 0.07(110) + 0.01(4.0)(110) = 137.1$$
+(c) FALSE: The only way to test whether the coefficient of the GPA/IQ interaction term is very small is to run a t or F test. We need to check to see whether the coefficient of the GPA/IQ interaction equals or does not equal 0 by checking the test-statistic and p-value of the hypothesis test. If the p-value is greater than 0.05, we can conclude that the coefficient is very small, or equal to 0.
+
+## ISL 3.7.4
+(a) We would expect the residual sum of squares (RSS) to be lower for the linear regression than the cubic regression because the true relationship between X and Y is linear. Since the linear regression is likely to be closer to the true relationship, the RSS can be expected to be smaller.
+
+(b) Since we don't have the test data, we do not have enough information to conclude that whether the test RSS is lower for the linear regression or the cubic regression.
+
+(c) If we don't know how far the true relationship between X and Y is from linear, the training RSS for the more flexible cubic regression is expected to be lower. This is because the cubic regression is likely to follow the data points more closely.
+
+(d) Since we do not know how far the true relationship between X and Y is from linear, we do not have enough information to conclude whether the test RSS is lower for the linear regression or the cubic regression. However, if the true relationship fits closer to a linear model than a cubic model, the test RSS for the linear regression might be lower than the test RSS for the cubic regression. If the true relationship fits closer to a linear model than a cubic model, the test RSS for the cubic regression might be lower than the test RSS for the linear regression. 
 

@@ -1,8 +1,49 @@
 # In-Class Programming Activity, Day 7
+# Jina Park
 
-Your work goes here ...
+## Task 1
+```{r}
+vals <- rexp(10, 1/100)
+vals
+```
 
+## Task 2
+```{r}
+test200 <- sum(log(dexp(vals, 1/200)))
+```
 
+## Task 3
+```{r}
+LL_exp <- function(rate) {
+  sum(log(dexp(vals, rate)))
+}
+```
+
+```{r}
+LL_exp(1/200)
+```
+
+## Task 4
+```{r}
+rates <- 1/(50:200)
+```
+
+## Task 5
+```{r}
+results <- sapply(rates, LL_exp)
+```
+
+## Task 6
+By eye, the maximum value is approximately -55.0.
+```{r}
+plot(1/rates, results, ylim=c(-57.5, -54))
+```
+## Automating the Search
+```{r}
+exp_results <- optimize(LL_exp, 
+                        lower=1/200, upper=1/50, 
+                        maximum=TRUE)
+```
 
 ## Test statements
 

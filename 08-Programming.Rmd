@@ -1,8 +1,52 @@
 # In-Class Programming Activity, Day 8
+# Jina Park
 
-Your work goes here ...
+## Task 1
+```{r}
 
+x <- runif(100, 20, 70)
+y <- 5 + 3*x + 2*rnorm(100)
+My_data <- data.frame(x, y)
+plot(My_data)
+```
+```{r}
+LL_line <- function(params) {
+  m <- params[1]
+  b <- params[2]
+  sigma <- params[3]
+  
+  sum(log(dnorm(y - (m * x + b), sd = sigma)))
+}
 
+testA <- LL_line(c(m = 3, b = 5, sigma = 2))
+testB <- LL_line(c(m = 4, b = 1, sigma = 10))
+```
+
+```{r}
+starting_params <- c(4, 1, 10)
+best <- optim(starting_params, LL_line, control=list(fnscale = -1))
+```
+
+## Task 2
+```{r}
+load(url("http://tiny.cc/dcf/Taxi_trips.rda"))
+
+taxi_likelihood <- function(parameter) {
+  base_fare <- parameter[1]
+  per_mile <- parameter[2]
+  params <- parameter[3]
+  
+  waiting_fare <- with(Taxi_trips, fare_amount - (base_fare + per_mile*trip_distance))
+  sum(log(dexp(waiting_fare, params) +.0001))
+  
+}
+
+starting_params <-  c(base_fare = 2.00, per_mile = 4.00, params = 1/3)
+best <- optim(starting_params, taxi_likelihood, control=list(fnscale = -1))
+
+with(Taxi_trips, plot(trip_distance, fare_amount, pch=20))
+abline(best$par['base_fare'], best$par['per_mile'], col="red")
+```
 
 ## Test statements
 

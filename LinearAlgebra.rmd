@@ -1,0 +1,29 @@
+---
+title: "Scalar Multiplication Functions"
+output: html_document
+---
+
+Some basic functions
+```{r}
+#a is a scalar and v is a vector
+scale <- function(a, v) {
+  a * v
+}
+
+#Addition of vectors
+vadd <- function(v1, v2) {
+  v1 + v2
+}
+
+#Sum to multiple of each element -- Dot product
+vdot <- function(v1, v2) {
+  return(sum(v1 * v2))
+}
+
+```
+
+
+Testing...
+```{r}
+testthat::expect_equal(scale(2, c(2, 7.5, -6, 1)), c(4, 15, -12, 2))
+```

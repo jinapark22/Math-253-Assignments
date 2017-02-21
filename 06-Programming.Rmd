@@ -1,8 +1,102 @@
 # In-Class Programming Activity, Day 6
+# Jina Park
 
-Your work goes here ...
+## Task 1
+```{r}
+myHistogram <- function(var,  nbins = 10, fill = "yellow") {
+
+  evenly_spaced = seq(min(var), max(var), length=nbins + 1)
+  evenly_spaced
+  bin_counts = table(cut(var, breaks = evenly_spaced))
+  xL = evenly_spaced[-length(evenly_spaced)]
+  xR = evenly_spaced[-1]
+  bin_width <- xL[2] - xL[1]
+  count = (as.numeric(bin_counts)/(sum(bin_counts)*bin_width))
+  hist_basics = data.frame(xL, xR, count)
+  
+  My_bars = one_to_five(hist_basics)
+  plot(My_bars, type="n", ylim=c(0,0.5))
+  
+  lines(My_bars)
+  polygon(My_bars, col=fill)
+  curve(dnorm(x, mean=mean(var), sd=sd(var)), add=TRUE, col="red")
+  return(bin_counts)
+  
+}
+
+make_one_bar <- function(point) {
+  xLeft <- point$xL
+  xRight <- point$xR
+  height <- point$count
+  res <- data.frame(
+    x = c(xLeft, xLeft, xRight, xRight, NA), 
+    y = c(    0, height, height,     0, NA)
+  )
+  res
+}
+
+one_to_five <- function(hist_data) {
+  bars <- NULL
+  for (k in 1:nrow(hist_data)) {
+    new_bar <- make_one_bar(hist_data[k, ])
+    bars <- rbind(bars, new_bar)
+  }
+  bars
+}
+```
+
+```{r}
+myHistogram(rnorm(1000), nbins =20, fill="yellow")
+```
+
+## Task 2
+
+```{r}
+v <- c(rnorm(10, mean=100, sd=1), rnorm(5, mean = 110, sd = 2))
+bandwidth <-  sd(v) / sqrt(length(v))
+kernel <- function(x, where) {
+  dnorm(where, mean = x, sd = bandwidth)  
+  
+}
+where <- seq(95, 120, length = 200)
+Dvals <- colSums(outer(v, where, FUN = kernel))
+plot(where, Dvals, type = "l")
+```
 
 
+## Task 3
+
+```{r}
+plotdensity <- function(v, data = parent.frame(), smooth = 1) {
+  v <- substitute(v)
+  vname <- as.character(v)
+  v <- eval(v, envir = data)
+  bandwidth <-  smooth * sd(v) / sqrt(length(v))
+  kernel <- function(x, where) {
+    dnorm(where, mean = x, sd = bandwidth)  
+  }
+  beyond <- diff(range(x)) / 5
+  where <- seq(min(v)-beyond, max(v)+beyond, length = 200)
+  Dvals <- colSums(outer(v, where, FUN = kernel))
+  plot(where, Dvals, type = "l", ylab = "Density", xlab = vname)
+}
+
+plotdensity(Accept, data = College)
+```
+
+## Above and Beyond
+
+```{r}
+plot(y ~ x, data=MyData)
+
+plotdensity <- function(v, data=parent.frame(), ...) {
+  v <- substitute(v) #a version of v that won't be evaluated until asked
+  vname <- as.character(v)
+  vvals <-eval(v, envir = data)
+  # Your statements go here
+  # Use vvals as the data and vname as the label for the x-axis
+}
+```
 
 ## Test statements
 

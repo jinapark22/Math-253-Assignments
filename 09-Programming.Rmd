@@ -1,7 +1,140 @@
 # In-Class Programming Activity, Day 9
+# Jina Park
 
-Your work goes here ...
 
+## Deck
+```{r}
+poker_deck <- c(outer((10 * 2:14), 1:4, '+'))
+```
+
+## Calculating suits and ranks
+```{r}
+ranks <- function(deck) {
+  deck %/% 10
+}
+```
+
+```{r}
+suits <- function(deck) {
+  deck %% 10
+}
+```
+
+## Three of a Kind
+```{r}
+is_three_of_a_kind <- function(fiveCardHand){
+  lengths(table(suits(fiveCardHand))) == 3
+  max(table(ranks(fiveCardHand))) == 3
+}
+```
+
+## Straight Flush
+```{r}
+# Cards of the same suit in consequtive order
+is_straight_flush <- function(fiveCardHand){
+  is_flush(fiveCardHand) && is_straight(fiveCardHand)
+}
+```
+
+## Two Pair
+```{r}
+is_two_pair <- function(fiveCardHand){
+  sum(table(ranks(fiveCardHand)) == 2) == 2
+}
+```
+
+## Pair
+```{r}
+is_pair <- function(fiveCardHand){
+  length(table(ranks(fiveCardHand))) == 4
+}
+```
+
+## Royal Flush
+```{r}
+# Five cards of the same suit with ranks 10, ack, queen, king, and ace
+
+is_royal_flush <- function(fiveCardHand){
+  is_straight_flush(fiveCardHand) && max(rank(fiveCardHand) == 14)
+  }
+```
+
+
+## Four of a Kind
+```{r}
+# Four cards of the same value (and, necessarily, different suits)
+is_four_of_a_kind <- function(fiveCardHand){
+  max(table(ranks(fiveCardHand))) == 4
+}
+```
+
+## Full House
+```{r}
+# Three of a kind and the other 2 cards forming a pair
+is_full_house <- function(fiveCardHand){
+  is_three_of_a_kind(fiveCardHand) && (length(table(ranks(fiveCardHand))) == 2)
+}
+```
+
+## Flush
+```{r}
+# Five cards of the same suit (0.20%)
+is_flush <- function(fiveCardHand){ 
+  max(table(suits(fiveCardHand))) == 5
+  }
+```
+
+## Straight
+```{r}
+# Five consequtively numbered cards
+is_straight <- function(fiveCardHand) {
+  all(diff(sort(ranks(fiveCardHand))) == 1)
+}
+```
+
+
+## Test Hand
+```{r}
+test_hand_1 <- function(poker_deck){
+  sample(poker_deck, 5)
+}
+
+test_hand_2 <- function(poker_deck){
+ sample(poker_deck, 5)
+}
+
+is_royal_flush(test_hand_1(poker_deck))
+is_full_house(test_hand_2(poker_deck))
+```
+
+## Estimating Probabilities
+```{r}
+before_draw <- function(...) {
+  five_cards <- sample(poker_deck, 5)
+  if (is_royal_flush(five_cards)) {
+    return("royal flush")
+  } else if (is_straight_flush(five_cards)) {
+    return("straight flush")
+  } else if (is_four_of_a_kind(five_cards)) {
+    return("four of a kind")
+  } else if (is_full_house(five_cards)) {
+    return("full house")
+  } else if (is_straight(five_cards)) {
+    return("straight")
+  } else if (is_three_of_a_kind(five_cards)) {
+    return("three of a kind")
+  } else if (is_two_pair(five_cards)) {
+    return("two pair")
+  } else if (is_pair(five_cards)) {
+    return("pair")
+  } else {
+    return("None")
+  }
+}
+
+table(sapply(1:10000, FUN=before_draw))
+
+```
 
 
 ## Test statements

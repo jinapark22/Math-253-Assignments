@@ -1,8 +1,77 @@
 # In-Class Programming Activity, Day 11
+# Jina Park
 
-Your work goes here ...
+## Matrices and their inverses
+```{r}
+Sigma <- matrix(c(1.0, -0.7, -0.7, 1.0), nrow=2, ncol=2, byrow=TRUE)
+```
 
+```{r}
+Sigma_inv <- solve(Sigma)
+```
 
+```{r}
+test_inverse <- Sigma %*% Sigma_inv
+```
+
+## Matrix Composition
+```{r}
+A <- chol(Sigma)  #Cholesky decomposition of sigma
+t(A)  #Transpose of a matrix
+t(A) %*% A  #equals Sigma
+```
+
+## Orthogonal Vectors and Matrices
+```{r}
+x1 <- rnorm(10)
+x2 <- rnorm(10)
+```
+
+```{r}
+x1 <- cbind(x1)
+x2 <- cbind(x2)
+```
+
+```{r}
+X <- cbind(x1, x2)
+```
+
+```{r}
+(t(X) %*% X)/nrow(X)  #covariance matrix
+```
+
+```{r}
+w1 <- cbind(rnorm(10000))
+w2 <- cbind(rnorm(10000))
+```
+
+```{r}
+W <- cbind(w1, w2)
+```
+
+```{r}
+W_cov <- (t(W) %*% W)/nrow(W)
+W_cov
+```
+
+## Generating Correlated Random Vectors
+```{r}
+A_inv <- chol(solve(Sigma))
+```
+
+```{r}
+Y <- X %*% A
+(t(Y) %*% Y)/nrow(Y)
+```
+
+```{r}
+Y <- W %*% A
+(t(Y) %*% Y)/nrow(Y)
+```
+
+```{r}
+plot(Y[,1], Y[,2], col=rgb(0,0,0,0.5))
+```
 
 ## Test statements
 

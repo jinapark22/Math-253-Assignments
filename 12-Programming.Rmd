@@ -1,8 +1,75 @@
 # In-Class Programming Activity, Day 12
+# Jina Park
 
-Your work goes here ...
+## Generating simulated data
+```{r}
+n_cases <- 10000
+red_mean <- c(1, 0)
+green_mean <- c(0, -1)
+blue_mean <- c(-1, 1)
+covar_red <- chol(matrix(c(3, -1.7, -1.7, 1), nrow = 2, ncol = 2))
+covar_blue <- chol(matrix(c(2, 1.5, 1.5, 3), nrow = 2, ncol = 2))
+```
 
+```{r}
+One <- matrix(rnorm(2 * n_cases, mean = 0, sd = 1), ncol = 2)
+Two <- matrix(rnorm(2 * n_cases, mean = 0, sd = 1), ncol = 2)
+Three <- matrix(rnorm(2 * n_cases, mean = 0, sd = 1), ncol = 2)
+```
 
+```{r}
+Red <- One %*% covar_red
+```
+
+```{r}
+Green <- Two %*% covar_red
+```
+
+```{r}
+Blue <- Three %*% covar_blue
+```
+
+```{r}
+Red <- Red + outer(rep(0, n_cases), red_mean, FUN = `+`)
+Green <- Green + outer(rep(0, n_cases), green_mean, FUN = `+`)
+Blue <- Blue + outer(rep(0, n_cases), blue_mean, FUN = `+`)
+```
+
+```{r}
+Red <- data.frame(x = Red[ ,1], y = Red[ ,2], class = "red", stringsAsFactors = FALSE)
+Blue <- data.frame(x = Blue[ ,1], y = Blue[ ,2], class = "blue", stringsAsFactors = FALSE)
+Green <- data.frame(x = Green[ ,1], y = Green[ ,2], class = "green", stringsAsFactors = FALSE)
+```
+
+```{r}
+Same_sigma <- rbind(Red, Green)
+Different_sigma <- rbind(Red, Blue)
+```
+
+## LDA and QDA
+```{r}
+library(MASS)
+mod_LDA_one <- lda(class ~ x + y, data = Same_sigma)
+mod_LDA_two <- lda(class ~ x + y, data = Different_sigma)
+test_LDA_one <- predict(mod_LDA_one, newdata = Same_sigma)
+test_LDA_two <- predict(mod_LDA_two, newdata = Different_sigma)
+```
+
+```{r}
+mod_QDA_one <- qda(class ~ x + y, data = Same_sigma)
+mod_QDA_two <- qda(class ~ x + y, data = Different_sigma)
+test_QDA_one <- predict(mod_QDA_one, newdata = Same_sigma)
+test_QDA_two <- predict(mod_QDA_two, newdata = Different_sigma)
+```
+
+```{r}
+table(Same_sigma$class, test_LDA_one$class)
+table(Different_sigma$class, test_LDA_two$class)
+table(Same_sigma$class, test_QDA_one$class)
+table(Different_sigma$class, test_QDA_two$class)
+```
+
+The performance of the LDA and QDA is the same when we use the same sigma. However, the QDA outperforms the LDA when we use different sigmas.
 
 ## Test statements
 

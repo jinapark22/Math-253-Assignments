@@ -1,2 +1,258 @@
 # Topic 4 Exercises: Classification
+# Jina Park 
 
+## Programming Assignments
+### 4.7.11
+```{r}
+library(ISLR)
+library(MASS)
+#Auto <- read.csv("/home/local/MAC/jpark2/Math-253-Assignments/Auto.csv")
+```
+
+(a)
+```{r}
+Auto$mpg01 <- with(ifelse(mpg > median(mpg), 1, 0), data=Auto)
+```
+
+(b)
+```{r}
+pairs(Auto[,-9])
+```
+```{r}
+boxplot(with(Auto, cylinders ~ mpg01), main = "Cylinders vs mpg01", xlab = "mpg01", ylab = "Cylinders")
+```
+```{r}
+boxplot(Auto$weight ~ Auto$mpg01, main = "Weight vs mpg01", xlab = "mpg01", ylab = "Weight")
+```
+```{r}
+boxplot(Auto$acceleration ~ Auto$mpg01, main = "Acceleration vs mpg01", xlab = "mpg01", ylab = "Acceleration")
+```
+
+```{r}
+boxplot(Auto$displacement ~ Auto$mpg01, main = "Displacement vs mpg01", xlab = "mpg01", ylab = "Displacement")
+```
+```{r}
+boxplot(Auto$origin ~ Auto$mpg01, main = "Origin vs mpg01", xlab = "mpg01", ylab = "Origin")
+```
+
+```{r}
+boxplot(Auto$year ~ Auto$mpg01, main = "Year vs mpg01", xlab = "mpg01", ylab = "Year")
+```
+
+According to the scatterplots and boxplots, the features that seem more likely to be useful in predicting mpg01 are displacement, weight, and cylinders due to the strong level of correlation.
+
+(c)
+```{r}
+set.seed(1)
+inds <- sample(1:nrow(Auto), size = nrow(Auto)/2)
+trainSet <- Auto[inds, ]
+testSet <- Auto[-inds, ]
+```
+
+(d) 
+```{r}
+lda.fit <- lda(mpg01 ~ displacement + weight + cylinders, data = trainSet)
+lda.pred <- predict(lda.fit, testSet)
+table(testSet$mpg01, lda.pred$class)
+```
+
+# Test error of the LDA model.
+```{r}
+sum(lda.pred$class!=testSet$mpg01)/nrow(testSet)
+```
+
+The test error of the LDA model is approximately 11%.
+
+(e) 
+```{r}
+qda.fit <- qda(mpg01 ~ displacement + weight + cylinders, data = trainSet)
+qda.pred <- predict(qda.fit, testSet)
+table(testSet$mpg01, qda.pred$class)
+```
+
+# Test error of the QDA model.
+```{r}
+sum(qda.pred$class != testSet$mpg01)/nrow(testSet)
+```
+
+The test error of the QDA model is approximately 12%.
+
+(f)
+```{r}
+logReg <- glm(mpg01 ~ displacement + weight + cylinders, data = trainSet, family = "binomial")
+summary(logReg)
+logReg.probs <- predict(logReg, testSet, type="response")
+logReg.pred <- ifelse(logReg.probs > 0.5, 1, 0)
+table(logReg.pred, testSet$mpg01)
+```
+
+```{r}
+mean(logReg.pred != testSet$mpg01)
+```
+
+The test error rate of the logistic regression is approximately 12%.
+
+(g) 
+```{r}
+set.seed(1)
+training <- trainSet[,c("displacement", "weight", "cylinders")]
+testing <- testSet[,c("displacement", "weight", "cylinders")]
+```
+
+```{r}
+library(class)
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 1)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+```{r}
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 2)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+
+```{r}
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 3)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+
+```{r}
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 4)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+
+```{r}
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 5)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+
+```{r}
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 6)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+```{r}
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 7)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+
+```{r}
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 8)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+
+```{r}
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 9)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+
+```{r}
+knn.pred <- class::knn(training, testing, trainSet$mpg01, k = 10)
+table(knn.pred, testSet$mpg01)
+mean(knn.pred != testSet$mpg01)
+```
+
+With a test error of approximately 10.204%, it appears that K=7 outperforms all the other K values between 1 and 10.
+
+### 4.7.13 
+```{r}
+library(MASS)
+```
+
+```{r}
+Boston$crim01 <- ifelse(Boston$crim > median(Boston$crim), 1, 0)
+```
+
+```{r}
+boxplot(with(Boston, indus ~ crim01), main = "indus vs crim01", xlab = "crim01", ylab = "indus")
+boxplot(with(Boston, nox ~ crim01), main = "nox vs crim01", xlab = "crim01", ylab = "nox")
+boxplot(with(Boston, age ~ crim01), main = "age vs crim01", xlab = "crim01", ylab = "age")
+boxplot(with(Boston, dis ~ crim01), main = "dis vs crim01", xlab = "crim01", ylab = "dis")
+boxplot(with(Boston, tax ~ crim01), main = "tax vs crim01", xlab = "crim01", ylab = "tax")
+boxplot(with(Boston, lstat ~ crim01), main = "lstat vs crim01", xlab = "crim01", ylab = "lstat")
+boxplot(with(Boston, black ~ crim01), main = "black vs crim01", xlab = "crim01", ylab = "black")
+boxplot(with(Boston, rad ~ crim01), main = "rad vs crim01", xlab = "crim01", ylab = "rad")
+boxplot(with(Boston, ptratio ~ crim01), main = "ptratio vs crim01", xlab = "crim01", ylab = "ptratio")
+boxplot(with(Boston, medv ~ crim01), main = "medv vs crim01", xlab = "crim01", ylab = "medv")
+```
+
+According to the boxplots, the features that seem more likely to be useful in predicting crim01 are zn, indus, nox, age, dis, tax, lstat, black, rad, ptratio, medv.
+
+```{r}
+set.seed(1)
+inds1 <- sample(1:nrow(Boston), size = nrow(Boston)/2)
+boston.train <- Boston[inds1, ]
+boston.test <- Boston[-inds1, ]
+```
+
+# LDA model
+```{r}
+lda.fit1 <- lda(crim01 ~ zn + indus + nox + age + dis + tax + lstat + black +  rad + ptratio + medv, data = boston.train)
+lda.pred1 <- predict(lda.fit1, boston.test)
+```
+
+# Test error of the LDA model.
+```{r}
+mean(lda.pred1$class!=boston.test$crim01)
+```
+
+The test error of the LDA model is 16.996%.
+
+# Logistic Regression
+```{r}
+logreg1 <- glm(crim01 ~ zn + indus + nox + age + dis + tax + lstat + black +  rad + ptratio + medv, data = boston.train, family = "binomial")
+summary(logreg1)
+logreg.probs <- predict(logreg1, boston.test, type="response")
+logreg.pred <- ifelse(logreg.probs > 0.5, 1, 0)
+```
+
+# Test error of the Logistic Regression
+```{r}
+mean(logreg.pred != boston.test$crim01)
+```
+
+The test error of the logistic regression is 11.858%.
+
+# KNN model
+```{r}
+trainingBoston <- boston.train[,c("zn", "indus", "nox", "age", "dis", "tax", "lstat", "black", "rad", "ptratio", "medv")]
+testingBoston <- boston.test[,c("zn", "indus", "nox", "age", "dis", "tax", "lstat", "black", "rad", "ptratio", "medv")]
+```
+
+```{r}
+knn.pred <- class::knn(trainingBoston, testingBoston, boston.train$crim01, k=1)
+table(knn.pred, boston.test$crim01)
+mean(knn.pred != boston.test$crim01)
+```
+
+The test error of KNN where k = 1 is 9.09%. In all, it appears that the test error of the KNN is lower than the test error of both the logistic regression and LDA model.
+
+## Theory Assignment
+### 4.7.1
+Prove that the logistic function representation and logit representation for the logistic regression model are equivalent (4.2 and 4.3).
+
+$$ p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}  $$
+
+$$ p(X)(1 + e^{\beta_0 + \beta_1X}) = e^{\beta_0 + \beta_1X} $$
+$$ p(X) + p(X)e^{\beta_0 + \beta_1 X} = e^{\beta_0 + \beta_1 X} $$
+$$ p(X) = e^{\beta_0 + \beta_1 X} - p(X) e^{\beta_0 + \beta_1 X} $$
+$$ p(X) = (1-p(X))e^{\beta_0 + \beta_1 X} $$
+$$ \frac{p(X)}{1-p(X)} = e^{\beta_0 + \beta_1 X} $$
+
+### 4.7.8
+We would use the logistic regression. This is because when we use KNN where K = 1, the training error is 0% and thus the test error is 36%. Since the test error for the logistic regression of 30% is lower, the logistic regression is better.
+
+### 4.7.9
+(a) $$p(x)/(1-p(x)) = 0.37$$
+$$p(x) = 0.37 - 0.37p(x)$$
+$$1.37p(x) = 0.37$$
+$$p(x) = 0.27$$
+On average, the percentage of people with odds of 0.37 of defaulting on their credit card payment will in fact default is 27%.
+
+(b) $$p(x)/(1-p(x)) = 0.16/(1-0.16) = 0.19$$

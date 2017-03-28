@@ -1,0 +1,39 @@
+
+```{r}
+Temp <- read.csv("http://tiny.cc/dcf/Temperature.csv", 
+                 stringsAsFactors = FALSE)
+
+knn <- function(form, data) {
+  M <- model.matrix(form, data)
+  yname <- form[[2]]
+  response <- eval(yname, envir = data)
+  # Important knn-related stuff here
+  result <- response
+  
+  # return the model as an object of class "knn"
+  class(result) <- "knn"
+  return(result)
+}
+
+predict.knn <- function(mod, newdata = NULL) {
+  if (is.null(newdata)) stop("I need data inputs!")
+  newM <- model.matrix(mod$formula, data = newdata)
+  one_row <- newM[1,]
+  
+  this_point <- matrix(one_row, nrow = , ncol = length(one_row))
+  
+  return(17)
+  
+}
+
+my_mod <- knn(Y ~ X1 * X2, data = head(Temp))
+predict(my_mod, newdata = mtcars)
+```
+
+```{r}
+f <- y ~ x1 + x2 + whatever
+class(f)
+f[[1]]
+f[[2]]
+f[[3]]
+```

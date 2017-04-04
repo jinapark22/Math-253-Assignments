@@ -1,8 +1,74 @@
 # In-Class Programming Activity, Day 15
+# Jina Park
 
-Your work goes here ...
+```{r}
+load("mona.rda")
+```
 
+## Overview
+```{r}
+X <- t(mona) - mean(mona[])
+```
 
+```{r}
+X_rand <- matrix(rnorm(prod(dim(X)), 0, 1), ncol = 191, byrow = TRUE)
+X_corr <- X_rand %*% chol(var(X))
+```
+
+## Sparse Beta
+```{r}
+beta <- sample(c(rep(0, 175), rep(2, 4), rep(5, 4), rep(-3, 4), rep(-4, 4)))
+```
+
+## The Output
+```{r}
+Y_pure <- X %*% beta
+Y_real <- (X %*% beta) + rnorm(nrow(X), mean = 0, sd = sqrt(0.1*var(Y_pure)))
+```
+## Least Squares
+```{r}
+beta_hat_pure <- coef(lm(Y_pure ~ X-1))
+plot(beta_hat_pure, beta)
+```
+```{r}
+beta_hat_real <- coef(lm(Y_real ~ X-1))
+plot(beta_hat_real, beta)
+```
+
+## The Lasso Estimator
+```{r}
+library(glmnet)
+lasso_mod <- cv.glmnet(X, Y_real, alpha=1)
+beta_lasso <- predict(lasso_mod, type = "coefficients", s = lasso_mod$lambda.min)
+```
+
+## Principal Components
+```{r}
+sing_vals <- svd(X)$d
+R_squared <- cumsum(sing_vals^2)/sum(sing_vals^2)
+plot(R_squared)
+n99 <- min(which(R_squared > .99))
+```
+
+```{r}
+sing_vals <- svd(X_rand)$d
+R_squared <- cumsum(sing_vals^2)/sum(sing_vals^2)
+plot(R_squared)
+n99_rand <- min(which(R_squared > .99))
+```
+
+```{r}
+sing_vals <- svd(X_corr)$d
+R_squared <- cumsum(sing_vals^2)/sum(sing_vals^2)
+plot(R_squared)
+n99_corr <- min(which(R_squared > .99))
+```
+
+```{r}
+library(pls)
+pcr.fit <- pcr(Y_real ~ X, scale = TRUE, validation = "CV")
+R2(pcr.fit)
+```
 
 ## Test statements
 

@@ -12,29 +12,28 @@ compare_ols_ridge <- function(responses, predictors, lambda = 1) {
   inds <- sample(1:nrow(GenCont), size = nrow(GenCont)/2)
   trainPred <- predictors[inds, ]
   testPred <- predictors[-inds, ]
-  trainRes <- responses[inds, ]
-  testRes <- responses[-inds, ]
+  trainRes <- responses[inds ]
+  testRes <- responses[-inds ]
   
-  mod <- lm(responses[inds] ~ as.matrix(trainSet))
-  glm_mod <- glmnet(as.matrix(trainSet), as.matrix(trainRes), alpha = 0)
+  mod <- lm(trainRes ~ as.matrix(trainPred))
+  glm_mod <- glmnet(as.matrix(trainPred), as.matrix(trainRes), alpha = 0)
   
-  pred_in <- predict(mod, trainSet)
-  pred_out <- predict(mod, testSet)
+  pred_in <- predict(mod, trainPred)
+  pred_out <- predict(mod, testPred)
   ols_in <- mean((pred_in - trainRes)^2)
   ols_out <- mean((pred_out - testRes)^2)
   
-  glm_in <- predict(glm_mod, as.matrix(trainSet))
-  glm_out <- predict(glm_mod, as.matrix(testSet))
+  glm_in <- predict(glm_mod, as.matrix(trainPred))
+  glm_out <- predict(glm_mod, as.matrix(testPred))
   ridge_in <- mean((glm_in - trainRes)^2)
-  ridge_in <- mean((glm_out - testRes)^2)
+  ridge_out <- mean((glm_out - testRes)^2)
   
-  list(lambda, ols_in, ridge_in, ols_out, ridge_out)
+  list(lambda=lambda, ols_in=ols_in, ridge_in=ridge_in, ols_out=ols_out, ridge_out=ridge_out)
 }
 ```
 
 ```{r}
 Shrink_results <- compare_ols_ridge(GenCont$Phenotypes, GenCont[,-1], lambda=1)
-
 ```
 
 ## Test statements

@@ -1,2 +1,129 @@
 # Topic 6 Exercises: Selecting Model Terms
+# Jina Park
+
+## Theory
+### 6.8.1
+We perform best subset, forward stepwise, and backward stepwise selection on a single data set. For each approach, we obtain p + 1 models, containing 0, 1, 2, . . . , p predictors.
+
+(a) Which of the three models with k predictors has the smallest training RSS?
+The model with the smallest training RSS will be the best subset model. This is because the best subset model chooses the smallest training RSS by examining all the possible models with k predictors. 
+
+(b) Which of the three models with k predictors has the smallest test RSS?
+The model with the smallest test RSS could possibly be all three of them. Although the best subset model examines all other models, the other models might outperform the model by chance.
+
+(c)
+i. TRUE: The predictors in the k-variable model identified by forward stepwise are a subset of the predictors in the (k+1)-variable model identified by forward stepwise selection.
+ii. TRUE: The predictors in the k-variable model identified by backward stepwise are a subset of the predictors in the (k + 1) variable model identified by backward stepwise selection.
+iii. FALSE: The predictors in the k-variable model identified by backward stepwise are a subset of the predictors in the (k + 1)- variable model identified by forward stepwise selection.
+iv. FALSE: The predictors in the k-variable model identified by forward stepwise are a subset of the predictors in the (k+1)-variable model identified by backward stepwise selection.
+v. FALSE: The predictors in the k-variable model identified by best subset are a subset of the predictors in the (k+1)-variable model identified by best subset selection.
+
+
+### 6.8.2
+(a) The lasso, relative to least squares, is (iii) less flexible and hence will give improved prediction accuracy when its increase in bias is less than its decrease in variance. This is because the lasso is more restrictive and thus will outperform the least squares model as long as its bias is not too high.
+
+(b) The ridge regression, relative to least squares, is (iii) less flexible and hence will give improved prediction accuracy when its increase in bias is less than its decrease in variance. This is because ridge regression penalizes large coefficients but generally produces smaller coefficients. This lowers flexibility and thus increases bias.
+
+(c) The non-linear methods, relative to least squares, is (ii) more flexible and hence will give improved prediction accuracy when its increase in variance is less than its decrease in bias. Since they are more flexible, the non-linear methods will have more variance, which needs to be less than the bias in order to perform well.
+
+## Applied
+# 6.8.9
+
+```{r}
+library(ISLR)
+```
+
+(a)
+```{r}
+set.seed(1)
+inds <- sample(1:nrow(College), size = nrow(College)/2)
+trainSet <- College[inds, ]
+testSet <- College[-inds, ]
+```
+
+(b)
+```{r}
+lm.fit <- lm(Apps ~ ., data=trainSet)
+lm.pred <- predict(lm.fit, testSet)
+mean((lm.pred - testSet$Apps)^2)
+```
+
+The test error is approximately 1,108,531.
+
+(c) Fit a ridge regression on the training set, with lambda chosen by cross-validation. Report the test error obtained.
+```{r}
+library(glmnet)
+```
+
+```{r}
+trainMatrix <- model.matrix(Apps ~ ., data=trainSet)
+testMatrix <- model.matrix(Apps ~ ., data=testSet)
+grid <- 10^seq(4, -2, length=100)
+ridge.fit <- glmnet(trainMatrix, trainSet$Apps, alpha=0, lambda=grid, thresh=1e-12)
+ridge.cv <- glmnet(trainMatrix, trainSet$Apps, alpha=0, lambda=grid, thresh=1e-12)
+ridge.bestLambda <- ridge.cv$lambda.min
+ridge.pred <- predict(ridge.fit, s=ridge.bestLambda, newx=testMatrix)
+mean((ridge.pred - testSet$Apps)^2)
+```
+
+The test error for the ridge regression is 1,196,184.
+
+(d) Fit a lasso model on the training set, with lambda chosen by cross-validation. Report the test error obtained, along with the value of M selected by cross-validation.
+```{r}
+lasso.fit <- glmnet(trainMatrix, trainSet$Apps, alpha=1, lambda=grid, thresh=1e-12)
+lasso.cv <- glmnet(trainMatrix, trainSet$Apps, alpha=1, lambda=grid, thresh=1e-12)
+lasso.bestLambda <- lasso.cv$lambda.min
+lasso.pred <- predict(lasso.fit, s=lasso.bestLambda, newx=testMatrix)
+mean((lasso.pred - testSet$Apps)^2)
+```
+
+The test error for the lasso regression is 2,173,263.
+
+```{r}
+rss <- sum((lasso.pred - testSet$Apps)^2)
+tss <- sum((testSet$Apps - mean(testSet$Apps))^2)
+1-(rss/tss)
+```
+
+The value of M chosen by cross-validation: -18.39546.
+
+(e) Fit a PCR model on the training set, with M chosen by cross-validation. Report the test error obtained, along with the value of M selected by cross-validation.
+```{r}
+library(pls)
+```
+
+```{r}
+pcr.fit <- pcr(Apps ~ ., data=testSet, scale=TRUE, validation="CV")
+pcr.pred <- predict(pcr.fit, testSet, ncomp = 10)
+mean((pcr.pred - testSet$Apps)^2)
+```
+ 
+The test test error of the PCR model is 1,343,170. 
+
+```{r}
+rss <- sum((pcr.pred - testSet$Apps)^2)
+tss <- sum((testSet$Apps - mean(testSet$Apps))^2)
+1-(rss/tss)
+```
+
+The value of M chosen by cross-validation is 0.8801277.
+
+(f) Fit a PLS model on the training set, with M chosen by cross-validation. Report the test error obtained, along with the value of M selected by cross-validation.
+```{r}
+pls.fit <- plsr(Apps ~ ., data=testSet, scale=TRUE, validation="CV")
+pls.pred <- predict(pls.fit, testSet, ncomp = 10)
+mean((pls.pred - testSet$Apps)^2)
+```
+
+The test error of the PLS model is 889,790.8.
+
+(g) Comment on the results obtained. How accurately can we predict
+the number of college applications received? Is there much
+difference among the test errors resulting from these five approaches?
+
+The test error of the PLS model was the lowest whereas the test error for the lasso regression was the highest. All the models seem to predict the number of college applications received with pretty good accuracy. Besides the the lasso and the PLS models, there isn't much difference among the test errors of the other three approaches.
+
+
+
+
 

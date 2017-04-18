@@ -1,2 +1,109 @@
 # Topic 7 Exercises: Nonlinear regression
+# Jina Park
 
+## Programming
+### 7.9.11 
+(a) 
+```{r}
+x1 <- rnorm(100)
+x2 <- rnorm(100)
+eps <- rnorm(100, sd = 1)
+y <- 1 + x1 + x2 + eps
+```
+
+(b) 
+```{r}
+bet1 <- 5
+```
+
+(c)
+```{r}
+a <- y - bet1 * x1
+beta2 <- lm(a ~ x2)$coef[2]
+```
+
+(d)
+```{r}
+bet2 <- 3
+a <- y - bet2 * x2
+beta1 <- lm(a ~ x1)$coef[2]
+```
+
+(e)
+```{r}
+require(ggplot2)
+require(reshape2)
+```
+
+```{r}
+bet0 <- bet1 <- bet2 <- rep(0, 1000)
+for (i in c(1:1000)) {
+  a <- y - bet1[i] * x1
+  bet2[i] <- lm(a ~ x2)$coef[2]
+  a <- y - bet2[i] * x2
+  bet1[i+1] <- lm(a ~ x1)$coef[2]
+  bet0[i] <- lm(a ~ x1)$coef[1]
+}
+```
+
+```{r}
+plot <- data.frame(Iteration = 1:1000, bet0, bet1 = bet1[-1], bet2)
+plot1 <- melt(plot, id.vars = "Iteration")
+
+ggplot(plot1, aes(x = Iteration, y = value, group = variable, col = variable)) + geom_line(size=1)
+```
+
+(f)
+```{r}
+mod <- lm(y ~ x1 + x2)
+plot(bet0, type="l", lwd=2, xlab="Iterations", ylab="Coefficient Estimates", ylim=c(-1,2), col = "red")
+
+lines(bet1[-1], col = "green")
+lines(bet2, col="blue")
+
+abline(h = coef(mod)[1], lty=2)
+abline(h = coef(mod)[2], lty=2)
+abline(h = coef(mod)[3], lty=2)
+```
+
+(g)
+```{r}
+head(plot)
+```
+
+We only need 1 backfitting iteration in order to obtain a "good" approximation to the multiple regression coefficient estimates. This is because the value of the betas remain the same after the first iteration. Thus, only one is sufficient.
+
+## Theory
+### 7.9.3
+Note the intercepts, slopes, and other relevant information.
+
+There is a linear line between x = -2 and 1, where the equation equals y = x + 2. There is a linear line between x = 1 and 2, where the equation equals y = -x + 2.
+The intercept equals 1.0.
+
+```{r}
+x <- -2:2
+y <- 1 + x + -2 * (x-1)^2 * I(x>1)
+plot(x,y)
+```
+
+### 7.9.4
+Note the intercepts, slopes, and other relevant information:
+
+The curve is constant between x = -2 and -1, where the equation equals y = 1. The curve is linear between -1 and 1, where the equation equals y = x + 2. The equation is constant between x = 0 and 1, where the equation equals y = 2. The equation is linear between 1 and 2, where the equation equals y = 3 - x. The intercept is 2.0.
+
+```{r}
+x <- -2:2
+y <- c(1 + 0 + 0,
+       1 + 0 + 0,
+       1 + 1 + 0,
+       1 + (1-0) + 0,
+       1 + (1-1) + 0)
+plot(x,y)
+```
+
+### 7.9.5
+(a) As lambda approaches infinity, g2 will have the smaller training RSS because it has a higher order polynomial and will thus be more flexible.
+
+(b) As lambda approaches infinity, g1 will have the smaller test RSS because g2 is likely to overfit the data due since its much more flexible.
+
+(c) For lambda = 0, they will have the same training and test RSS.

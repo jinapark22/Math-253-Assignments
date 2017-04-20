@@ -1,11 +1,66 @@
 # In-Class Programming Activity, Day 17
+# Jina Park
+## Don't need to complete :)
 
-Your work goes here ...
+## Cartoon-like Data
+```{r}
+library(tree)
+```
 
+```{r}
+Cartoon_data <- data.frame(x = 1.8, y = c(2, 5, 1, 3, 8, 5, 4, 6), class = c("A", "B", "A", "A", "B", "B", "A", "B"))
+```
 
+## Perfectly Pure Trees
+Construct trees where every leaf perfectly matches the data.
+```{r}
+# Set controls for growing the trees to values that push the trees to grow until the in-sample fit is perfect.
+pure <- tree.control(8, mincut = 0, minsize = 1, mindev = 0)
+```
+
+## Regression Tree
+```{r}
+#rtree_pure <- tree(y ~ x, data=Cartoon_data, control=pure)
+#plot(rtree_pure)
+#text(rtree_pure)
+```
+
+## Classification Tree
+```{r}
+#ctree_pure <- tree(class ~ x, data=Cartoon_data, control=pure)
+#plot(ctree_pure)
+#text(ctree_pure)
+```
+
+## Evaluating the Tree
+```{r}
+#predict(rtree_pure)
+#predict(ctree_pure)
+#predict(rtree_pure, newdata = data.frame(x = 3)) predict(ctree_pure, newdata = data.frame(x = 7))
+
+```
+
+## Deviance of each node
+
+## Deviance of a tree
+
+## Prunning the tree
+```{r}
+#rtree_5 <- prune.tree(rtree_pure, best=5)
+#ctree_2 <- prune.misclass(ctree_pure, best=2)
+```
+
+```{r}
+nterminal <- c(2:8)
+```
+
+```{r}
+#pure_for_cps <- tree.control(nrow(CPS85), mincut = 0, minsize = 1, mindev = 0)
+#Sector_classifier <- tree(sector ~ wage + sex + educ + exper, data = mosaicData::CPS85, control = pure_for_cps)
+```
 
 ## Test statements
 
-```{r}
+```{r}s
 scoreActivity::score253(17)
 ```

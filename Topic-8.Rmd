@@ -1,2 +1,148 @@
 # Topic 8 Exercises: Tree-based models
+# Jina Park 
 
+## Programming
+### 8.4.12
+Apply boosting, bagging, and random forests to a data set of your choice. Be sure to fit the models on a training set and to evaluate their performance on a test set. How accurate are the results compared to simple methods like linear or logistic regression? Which of these approaches yields the best performance?
+
+```{r}
+library(ISLR)
+```
+
+```{r}
+set.seed(1)
+inds <- sample(1:nrow(Weekly), size = nrow(Weekly)/2)
+Weekly$Direction <- ifelse(Weekly$Direction == "Up", 1, 0)
+trainSet <- Weekly[inds,]
+testSet <- Weekly[-inds,]
+```
+
+```{r}
+library(gbm)
+logit.fit <- glm(Direction ~ . - Year - Today, data=trainSet, family="binomial")
+logit.prob <- predict(logit.fit, newdata=testSet, type = "response")
+logit.pred <- ifelse(logit.prob > 0.5, 1, 0)
+table(testSet$Direction, logit.pred)
+```
+
+The classification errror for the logit model is 1-((11+282)/(11+244+8+282)) = 0.4624.
+
+```{r}
+library(gbm)
+```
+
+```{r}
+boost.fit <- gbm(Direction ~ . - Year - Today, data = trainSet, distribution = "bernoulli", n.trees = 5000)
+boost.prob <- predict(boost.fit, newdata = testSet, n.trees = 5000)
+boost.pred <- ifelse(boost.prob > 0.5, 1, 0)
+table(testSet$Direction, boost.pred)
+```
+
+The classification error for the boosting model is 1 - ((169+111)/(169+86+179+111)) = 0.48624.
+
+```{r}
+library(randomForest)
+```
+
+```{r}
+bag.fit <- randomForest(Direction ~ . - Year - Today, mtry = 6, data = trainSet)
+bag.prob <- predict(bag.fit, newdata = testSet)
+bag.pred <- ifelse(bag.prob > 0.5, 1, 0)
+table(testSet$Direction, bag.pred)
+```
+
+The classification error for the baggining model is 1 - ((80+217)/(80+175+73+217)) = 0.45505.
+
+```{r}
+rf.fit <- randomForest(Direction ~ . - Year - Today, mtry = 2, data = trainSet)
+rf.prob <- predict(rf.fit, newdata = testSet)
+rf.pred <- ifelse(rf.prob > 0.5, 1, 0)
+table(testSet$Direction, rf.pred)
+```
+
+The classification error of the random forests method is 1 - ((77+228)/(77+178+62+228)) = 0.440467.
+
+Of the different approaches, random forests yields the best performance because it produces the lowest classification error. Compared to the logistic regression, the result are pretty accurate.
+
+## Theory
+### 8.4.1
+```{r}
+par(xpd = NA)
+
+plot(NA, NA, type = "n", xlim = c(0,100), ylim = c(0,100), xlab = "X", ylab = "Y")
+
+# t1
+lines(x = c(40,40), y = c(0,100))
+text(x = 40, y = 108, labels = c("t1"), col = "blue")
+
+# t2
+lines(x = c(0,40), y = c(75,75))
+text(x = -8, y = 75, col = "blue", labels = c("t2"))
+
+# t3
+lines(x = c(75,75), y = c(0,100))
+text(x = 75, y = 108, col = "blue", labels = c("t3"))
+
+# t4
+lines(x = c(20,20), y = c(0,75))
+text(x = 20, y = 80, col = "blue", labels = c("t4"))
+
+# t5
+lines(x = c(75,100), y = c(25,25))
+text(x = 70, y = 25, col = "blue", labels = c("t5"))
+
+text(x = (40+75)/2, y = 50, labels = c("R1"))
+text(x = 20, y = (100+75)/2, labels = c("R2"))
+text(x = (75+100)/2, y = (100+25)/2, labels = c("R3"))
+text(x = (75+100)/2, y = 25/2, labels = c("R4"))
+text(x = 30, y = 75/2, labels = c("R5"))
+text(x = 10, y = 75/2, labels = c("R6"))
+```
+
+### 8.4.2 (FINISH)
+It is mentioned in Section 8.2.3 that boosting using depth-one trees (or stumps) leads to an additive model. Explain why this is the case. 
+
+Boosting using depth-one trees leads to an additive model because boosting fits to the residuals in the previous model. Since we have to know the residuals in the previous model in order to fit a new tree, we need to add the previous tree to the current tree each time. For this reason, boosting with depth-one trees leads to an additive model.
+
+### 8.4.3
+```{r}
+p <- seq(0, 1, 0.01)
+giniIndex <- 2 * p * (1 - p)
+classError <- 1 - pmax(p, 1 - p)
+crossEntropy <- - (p * log(p) + (1 - p) * log(1 - p))
+matplot(p, cbind(giniIndex, classError, crossEntropy), col = c("red", "blue", "orange"))
+```
+
+### 8.4.4
+```{r}
+par(xpd = NA)
+plot(NA, NA, type = "n", xlim = c(-2, 2), ylim = c(-3, 3), xlab = "X1", ylab = "X2")
+
+lines(x = c(-2, 2), y = c(1, 1))
+lines(x = c(1, 1), y = c(-3, 1))
+
+# -1.8
+text(x = (-2 + 1)/2, y = -1, labels = c(-1.8))
+
+# 0.63
+text(x = 1.5, y = -1, labels = c(0.63))
+
+# 2.49
+lines(x = c(-2, 2), y = c(2, 2))
+text(x = 0, y = 2.5, labels = c(2.49))
+
+# -1.06
+lines(x = c(0, 0), y = c(1, 2))
+text(x = -1, y = 1.5, labels = c(-1.06))
+
+# 0.21
+text(x = 1, y = 1.5, labels = c(0.21))
+```
+
+
+### 8.4.5
+What is the final classification under each of these two approaches?
+
+Majority vote approach: we classify X as Red because it is the class that occurs the most.
+
+Classify based on average probability:we classify X as Green because the average of the 10 probabilities equals 0.45 and since the probability is less than 0.5, we choose Green.

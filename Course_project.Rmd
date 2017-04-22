@@ -1,0 +1,129 @@
+## MATH 253: Machine Learning
+## Kaggle Course Project
+## Team Members: Jina Park, Nikhita Jain, Nadia Berriel
+
+
+### Description of Alcohol Consumption Level Problem 
+The problem we are attempting to solve is alcohol consumption level among mathematics students in secondary schools. We aim to use machine learning to predict the alcohol consumption level of these students based on different variables such as romantic relationship status, extracurricular activities, parent’s education levels, and study time. Through several computations, we hope to formulate a prediction with an uncertainty of approximately 15%. 
+
+### Description of the Dataset 
+The data is obtained from UCI Machine Learning. This dataset collects social, gender, and study information about college students. The response variables we will investigate are Dalc and Walc, which represent workday and weekday alcohol consumption, respectively. There are 383 students in the dataset, where the students can be identified by searching for identical attributes that characterize each student. Given the random controlled setting of this data, there was no missing data. The dataset can be found on the following website: https://www.kaggle.com/uciml/student-alcohol-consumption.
+
+
+### Classification and regression methods applied
+```{r}
+library(ISLR)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+mathAlcohol <- read.csv("student-mat.csv")
+```
+
+```{r}
+mod1 <- prp(rpart(Dalc~.- Walc, data=mathAlcohol), main = "Classification of Sex")
+mod1
+```
+
+Using recursive partioning allows us to find the classification or regression models of a very general structure
+using a two stage procedure. This can be represented as binary trees. First the single variable is found which best splits the data into two groups (Females and Males). The data is separated, and then this process is applied separately to each sub-group, and so on recursively until the subgroups either reach a minimum size. In this case, our binary tree allows us to find the category where students' alcohol consumption is stronger. 
+
+
+```{r}
+mod2 <- randomForest(Dalc ~ . - Walc, data=mathAlcohol)
+importance(mod2)
+```
+
+This regression, Every observation (such as school, sex, age, address, etc.) is fed into every decision tree. The most common outcome for each observation is used as the final output. A new observation is fed into all the trees and taking a majority vote for each classification model. In this case, we can conclude that the sex, age, traveltime, goout, and absences are the important factors deciding alcohol consumption. Also, the model has only 13.84% error which means we can predict with 86.16% accuracy.
+
+
+## Linear Model 
+```{r}
+set.seed(1)
+inds <- sample(1:nrow(mathAlcohol), size = nrow(mathAlcohol)/2)
+trainSet <- mathAlcohol[inds, ]
+testSet <- mathAlcohol[-inds, ]
+```
+
+```{r}
+lm.fit <- lm(Dalc ~ ., data=trainSet)
+lm.pred <- predict(lm.fit, testSet)
+mean((lm.pred - testSet$Dalc)^2)
+```
+
+The test error for the linear model is 0.5016. This means that the linear model we constructed is fairly accurate. 
+
+## Linear Regression Plot
+```{r}
+boxplot(mathAlcohol$Dalc, mathAlcohol$sex, xlab="Sex", ylab="Weekly Average Alcohol Consumption", main="Boxplot of Weekly Average Alcohol Consumption depending on Sex")
+boxplot(Dalc ~ studytime, data = mathAlcohol, xlab="Study Time", ylab="Weekly Average Alcohol Consumption", main="Boxplot of Weekly Average Alcohol Consumption varying by Studytime")
+library(ggplot2)
+ggplot(mathAlcohol, aes(x = freetime, y = Dalc, color = sex)) + geom_jitter(alpha = .3) + ggtitle("Freetime varying by Dalc and sex")
+
+ggplot(mathAlcohol, aes(x = freetime, y = Dalc)) + geom_jitter(alpha = .3) + facet_grid(sex ~ studytime) + ggtitle("Ggplot of Studytime and sex over freetime")
+```
+
+The first boxplot titled "Boxplot of Weekly Average Alcohol Consumption depending on Sex" Shows the mean, minimum, and maximun x value. The second Boxplot titled "Boxplot of Weekly Average Alcohol Consumption varying by Studytime" compares the alcohol consumption and the amount of time spent studying. The third graph is a ggplot titled "Freetime varying by Dalc and sex" that controls for sex and compares the Dalc based on the amount of freetime. The final graph is also a ggplot titled "Ggplot of Studytime and sex over freetime" showing the concentration of Dalc depending on freetime divided into two: Males and Females. 
+
+## Ridge Regression
+```{r}
+library(glmnet)
+```
+
+```{r}
+trainMatrix <- model.matrix(Dalc ~ . - Walc, data=trainSet)
+testMatrix <- model.matrix(Dalc ~ . - Walc, data=testSet)
+grid <- 10^seq(4, -2, length=100)
+ridge.fit <- glmnet(trainMatrix, trainSet$Dalc, alpha=0, lambda=grid, thresh=1e-12)
+ridge.cv <- glmnet(trainMatrix, trainSet$Dalc, alpha=0, lambda=grid, thresh=1e-12)
+ridge.bestLambda <- ridge.cv$lambda.min
+ridge.pred <- predict(ridge.fit, s=ridge.bestLambda, newx=testMatrix)
+mean((ridge.pred - testSet$Dalc)^2)
+```
+
+The test error for the ridge regression is 0.7803. The ridge regression penalizes the size of the regression coefficients.
+
+## Lasso Regression
+```{r}
+lasso.fit <- glmnet(trainMatrix, trainSet$Dalc, alpha=1, lambda=grid, thresh=1e-12)
+lasso.cv <- glmnet(trainMatrix, trainSet$Dalc, alpha=1, lambda=grid, thresh=1e-12)
+lasso.bestLambda <- lasso.cv$lambda.min
+lasso.pred <- predict(lasso.fit, s=lasso.bestLambda, newx=testMatrix)
+mean((lasso.pred - testSet$Dalc)^2)
+```
+
+The test error for the lasso regression is 0.7285, fairly close to the ridge regression we calculated in the previous section. The lasso regression enhances the prediction accuracy and interpretability of the statistical model.
+
+### K-Fold Cross-Validation
+```{r}
+k_fold <- function(formula, method = lm, data = mathAlcohol, predfun = predict, k = 10) {
+  sets <- rep(1:k, each = nrow(data)/k, length.out = nrow(data))
+  mspe <- numeric(k)
+  
+  for (i in 1:k) {
+    For_Training <- data[sets != i, ]
+    For_Testing <- data[sets == i, ]
+    mod <- method(formula, data = For_Training)
+    pred_vals <-predfun(mod, newdata = For_Testing)
+    mspe[i] <- mean((For_Testing[[as.character(formula[[2]])]] - pred_vals)^2)
+  }
+  error_estimate <- mean(mspe)
+  return(error_estimate)
+}
+```
+
+## Generalizing the Function
+```{r}
+k_fold(formula = Dalc ~ sex + age + Medu + Fedu + Mjob + Fjob + reason + traveltime + studytime + famrel + freetime + goout + health + absences + G1 + G2 + G3, data = mathAlcohol)
+```
+
+The in-sample error for the K-Fold cross validation is 0.7045 when k = 10. This error is biased to be lower than cross-validated prediction errors.
+
+### Evaluation of Results
+Our model provides meaningful results to the purpose of this project. We now have a better understanding of what variables predict weekly average alcohol consumption among math students. Some of the variables that are highly predictive of weekly average alcohol consumption are sex, age, parent's education levels, grades, and absences. One way in which a better result might be found is having a larger dataset and thus larger testing and training data. This could potential lead to a smaller variance. Rather than treating our Dalc variable as continuous, we could produced a dummy variable for whether the students drink alcohol during the day. Using this dummy variable, we could have instead used a logistic regression and LDA and QDA models.
+
+### Speculative ideas about how better results can be achieved
+Given that one of the variables we controlled for sex given that it was one of the most influential variables for the students' alcohol consumption. In order to improve our results, we could have better our regression lines by incorporating additional variables that could have impacted the weekly alcohol consumption of students in secondary school.
+
+
+
+

@@ -59,6 +59,12 @@ boxplot(Dalc ~ studytime, data = mathAlcohol, xlab="Study Time", ylab="Weekly Av
 library(ggplot2)
 ggplot(mathAlcohol, aes(x = freetime, y = Dalc, color = sex)) + geom_jitter(alpha = .3) + ggtitle("Freetime varying by Dalc and sex")
 
+ggplot(mathAlcohol, aes(x = studytime, y = Dalc, color = sex)) + geom_jitter(alpha = .3) + ggtitle("Studytime varying by Dalc and sex")
+
+ggplot(mathAlcohol, aes(x = absences, y = Dalc, color = sex)) + geom_jitter(alpha = .3) + ggtitle("Absences varying by Dalc and sex")
+
+ggplot(mathAlcohol, aes(x = G1, y = Dalc, color = sex)) + geom_jitter(alpha = .3) + ggtitle("Grade 1st Trimester varying by Dalc and sex")
+
 ggplot(mathAlcohol, aes(x = freetime, y = Dalc)) + geom_jitter(alpha = .3) + facet_grid(sex ~ studytime) + ggtitle("Ggplot of Studytime and sex over freetime")
 ```
 

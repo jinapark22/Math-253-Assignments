@@ -33,7 +33,7 @@ mod2 <- randomForest(Dalc ~ . - Walc, data=mathAlcohol)
 importance(mod2)
 ```
 
-This regression, Every observation (such as school, sex, age, address, etc.) is fed into every decision tree. The most common outcome for each observation is used as the final output. A new observation is fed into all the trees and taking a majority vote for each classification model. In this case, we can conclude that the sex, age, traveltime, goout, and absences are the important factors deciding alcohol consumption. Also, the model has only 13.84% error which means we can predict with 86.16% accuracy.
+This regression, Every observation (such as school, sex, age, address, etc.) is fed into every decision tree. The most common outcome for each observation is used as the final output. A new observation is fed into all the trees and taking a majority vote for each classification model. In this case, we can conclude that the sex, age, traveltime, goout, and absences are the important factors deciding alcohol consumption. Also, the model has only 13.84% error which means we can predict with 86.16% accuracy. We subtract the Walc variable from the regression because it is significantly correlated with the Dalc variable. Thus, to reduce the multicollinearity between the variables, we remove Walc from the regression.
 
 
 ## Linear Model 

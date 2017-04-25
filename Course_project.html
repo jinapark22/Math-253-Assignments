@@ -306,38 +306,38 @@ library(randomForest)</code></pre>
 ## unique values. Are you sure you want to do regression?</code></pre>
 <pre class="r"><code>importance(mod2)</code></pre>
 <pre><code>##            IncNodePurity
-## school         4.4115545
-## sex           16.9745740
-## age           17.3156585
-## address        3.3011025
-## famsize        4.6149723
-## Pstatus        2.3640368
-## Medu           6.6472083
-## Fedu           7.5379307
-## Mjob          13.7729402
-## Fjob          10.6501784
-## reason        15.1165245
-## guardian       4.9668371
-## traveltime    15.8391176
-## studytime      8.7454560
-## failures       5.1855310
-## schoolsup      1.9584655
-## famsup         4.3173561
-## paid           4.8477599
-## activities     3.4176142
-## nursery        3.9391258
-## higher         0.8814912
-## internet       1.7896759
-## romantic       2.6980602
-## famrel        12.9769369
-## freetime       9.8391296
-## goout         23.2584689
-## health         8.4789354
-## absences      22.4443225
-## G1            13.3906839
-## G2            15.1802298
-## G3            15.1712648</code></pre>
-<p>This regression, Every observation (such as school, sex, age, address, etc.) is fed into every decision tree. The most common outcome for each observation is used as the final output. A new observation is fed into all the trees and taking a majority vote for each classification model. In this case, we can conclude that the sex, age, traveltime, goout, and absences are the important factors deciding alcohol consumption. Also, the model has only 13.84% error which means we can predict with 86.16% accuracy.</p>
+## school         5.0496175
+## sex           17.1893222
+## age           16.1408314
+## address        3.3522189
+## famsize        4.6923999
+## Pstatus        2.1525091
+## Medu           7.0700230
+## Fedu           6.8264696
+## Mjob          13.8732451
+## Fjob          10.5318104
+## reason        14.7440999
+## guardian       4.6496801
+## traveltime    16.2578054
+## studytime      9.0862003
+## failures       5.0087955
+## schoolsup      1.6473245
+## famsup         4.0483845
+## paid           4.4412360
+## activities     4.0306360
+## nursery        4.4184740
+## higher         0.8760687
+## internet       1.9607729
+## romantic       2.8171332
+## famrel        12.5016355
+## freetime      10.6238331
+## goout         23.3331284
+## health         8.5821496
+## absences      22.3470300
+## G1            13.2315680
+## G2            15.7228883
+## G3            15.0683944</code></pre>
+<p>This regression, Every observation (such as school, sex, age, address, etc.) is fed into every decision tree. The most common outcome for each observation is used as the final output. A new observation is fed into all the trees and taking a majority vote for each classification model. In this case, we can conclude that the sex, age, traveltime, goout, and absences are the important factors deciding alcohol consumption. Also, the model has only 13.84% error which means we can predict with 86.16% accuracy. We subtract the Walc variable from the regression because it is significantly correlated with the Dalc variable. Thus, to reduce the multicollinearity between the variables, we remove Walc from the regression.</p>
 </div>
 </div>
 <div id="linear-model" class="section level2">

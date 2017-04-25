@@ -306,37 +306,37 @@ library(randomForest)</code></pre>
 ## unique values. Are you sure you want to do regression?</code></pre>
 <pre class="r"><code>importance(mod2)</code></pre>
 <pre><code>##            IncNodePurity
-## school         5.0496175
-## sex           17.1893222
-## age           16.1408314
-## address        3.3522189
-## famsize        4.6923999
-## Pstatus        2.1525091
-## Medu           7.0700230
-## Fedu           6.8264696
-## Mjob          13.8732451
-## Fjob          10.5318104
-## reason        14.7440999
-## guardian       4.6496801
-## traveltime    16.2578054
-## studytime      9.0862003
-## failures       5.0087955
-## schoolsup      1.6473245
-## famsup         4.0483845
-## paid           4.4412360
-## activities     4.0306360
-## nursery        4.4184740
-## higher         0.8760687
-## internet       1.9607729
-## romantic       2.8171332
-## famrel        12.5016355
-## freetime      10.6238331
-## goout         23.3331284
-## health         8.5821496
-## absences      22.3470300
-## G1            13.2315680
-## G2            15.7228883
-## G3            15.0683944</code></pre>
+## school         4.5249783
+## sex           16.6956662
+## age           15.6037843
+## address        3.6061206
+## famsize        4.6234219
+## Pstatus        2.4227340
+## Medu           7.0004243
+## Fedu           7.0568139
+## Mjob          13.2912434
+## Fjob          10.5667102
+## reason        14.8856353
+## guardian       5.3514356
+## traveltime    15.2546639
+## studytime      8.5741912
+## failures       4.7543126
+## schoolsup      2.2361895
+## famsup         3.4193842
+## paid           4.7319393
+## activities     3.8838895
+## nursery        4.1744185
+## higher         0.9263652
+## internet       1.4947832
+## romantic       3.2933751
+## famrel        12.5679536
+## freetime      10.0521443
+## goout         23.7315735
+## health         8.1748391
+## absences      21.5239301
+## G1            13.5445349
+## G2            14.3814861
+## G3            15.4950581</code></pre>
 <p>This regression, Every observation (such as school, sex, age, address, etc.) is fed into every decision tree. The most common outcome for each observation is used as the final output. A new observation is fed into all the trees and taking a majority vote for each classification model. In this case, we can conclude that the sex, age, traveltime, goout, and absences are the important factors deciding alcohol consumption. Also, the model has only 13.84% error which means we can predict with 86.16% accuracy. We subtract the Walc variable from the regression because it is significantly correlated with the Dalc variable. Thus, to reduce the multicollinearity between the variables, we remove Walc from the regression.</p>
 </div>
 </div>
@@ -421,7 +421,7 @@ mean((lasso.pred - testSet$Dalc)^2)</code></pre>
 <p>The in-sample error for the K-Fold cross validation is 0.7045 when k = 10. This error is biased to be lower than cross-validated prediction errors.</p>
 <div id="evaluation-of-results" class="section level3">
 <h3>Evaluation of Results</h3>
-<p>Our model provides meaningful results to the purpose of this project. We now have a better understanding of what variables predict weekly average alcohol consumption among math students. Some of the variables that are highly predictive of weekly average alcohol consumption are sex, age, parent’s education levels, grades, and absences. One way in which a better result might be found is having a larger dataset and thus larger testing and training data. This could potential lead to a smaller variance. Rather than treating our Dalc variable as continuous, we could produced a dummy variable for whether the students drink alcohol during the day. Using this dummy variable, we could have instead used a logistic regression and LDA and QDA models.</p>
+<p>Our model provides meaningful results to the purpose of this project. We now have a better understanding of what variables predict weekly average alcohol consumption among math students. Some of the variables that are highly predictive of weekly average alcohol consumption are sex, age, parent’s education levels, grades, and absences. One way in which a better result might be found is having a larger dataset and thus larger testing and training data. This could potential lead to a smaller variance. Rather than treating our Dalc variable as continuous, we could have produced a dummy variable for whether the students drink alcohol during the day. Using this dummy variable, we could have instead used a logistic regression and LDA and QDA models.</p>
 </div>
 <div id="speculative-ideas-about-how-better-results-can-be-achieved" class="section level3">
 <h3>Speculative ideas about how better results can be achieved</h3>

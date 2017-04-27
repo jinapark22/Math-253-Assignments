@@ -21,7 +21,6 @@ mathAlcohol <- read.csv("student-mat.csv")
 
 ```{r}
 mod1 <- prp(rpart(Dalc~.- Walc, data=mathAlcohol), main = "Classification of Sex")
-mod1
 ```
 
 Using recursive partioning allows us to find the classification or regression models of a very general structure
@@ -52,6 +51,10 @@ mean((lm.pred - testSet$Dalc)^2)
 
 The test error for the linear model is 0.5016. This means that the linear model we constructed is fairly accurate. 
 
+```{r}
+summary(lm(Dalc ~ sex + age + Medu + Fedu + studytime + traveltime + romantic + G1 + G2 + G3, data=mathAlcohol))
+```
+
 ## Linear Regression Plot
 ```{r}
 boxplot(mathAlcohol$Dalc, mathAlcohol$sex, xlab="Sex", ylab="Weekly Average Alcohol Consumption", main="Boxplot of Weekly Average Alcohol Consumption depending on Sex")
@@ -66,7 +69,12 @@ ggplot(mathAlcohol, aes(x = absences, y = Dalc, color = sex)) + geom_jitter(alph
 ggplot(mathAlcohol, aes(x = G1, y = Dalc, color = sex)) + geom_jitter(alpha = .3) + ggtitle("Grade 1st Trimester varying by Dalc and sex")
 
 ggplot(mathAlcohol, aes(x = freetime, y = Dalc)) + geom_jitter(alpha = .3) + facet_grid(sex ~ studytime) + ggtitle("Ggplot of Studytime and sex over freetime")
+
+ggplot(mathAlcohol, aes(x = failures, y = Dalc, color = sex)) + geom_jitter(alpha = .3) + ggtitle("Number of Past Failures varying by Dalc and sex")
+
 ```
+
+
 
 The first boxplot titled "Boxplot of Weekly Average Alcohol Consumption depending on Sex" Shows the mean, minimum, and maximun x value. The second Boxplot titled "Boxplot of Weekly Average Alcohol Consumption varying by Studytime" compares the alcohol consumption and the amount of time spent studying. The third graph is a ggplot titled "Freetime varying by Dalc and sex" that controls for sex and compares the Dalc based on the amount of freetime. The final graph is also a ggplot titled "Ggplot of Studytime and sex over freetime" showing the concentration of Dalc depending on freetime divided into two: Males and Females. 
 
@@ -101,7 +109,7 @@ The test error for the lasso regression is 0.7285, fairly close to the ridge reg
 
 ### K-Fold Cross-Validation
 ```{r}
-k_fold <- function(formula, method = lm, data = mathAlcohol, predfun = predict, k = 10) {
+k_fold <- function(formula, method = lm, data = mathAlcohol, predfun = predict, k = 20) {
   sets <- rep(1:k, each = nrow(data)/k, length.out = nrow(data))
   mspe <- numeric(k)
   
@@ -122,13 +130,54 @@ k_fold <- function(formula, method = lm, data = mathAlcohol, predfun = predict, 
 k_fold(formula = Dalc ~ sex + age + Medu + Fedu + Mjob + Fjob + reason + traveltime + studytime + famrel + freetime + goout + health + absences + G1 + G2 + G3, data = mathAlcohol)
 ```
 
-The in-sample error for the K-Fold cross validation is 0.7045 when k = 10. This error is biased to be lower than cross-validated prediction errors.
+The in-sample error for the K-Fold cross validation is 0.7045 when k = 10. When k = 20, the in-sample error for the K-fold is 0.6754. This error is biased to be lower than cross-validated prediction errors.
 
 ### Evaluation of Results
 Our model provides meaningful results to the purpose of this project. We now have a better understanding of what variables predict weekly average alcohol consumption among math students. Some of the variables that are highly predictive of weekly average alcohol consumption are sex, age, parent's education levels, grades, and absences. One way in which a better result might be found is having a larger dataset and thus larger testing and training data. This could potential lead to a smaller variance. Rather than treating our Dalc variable as continuous, we could have produced a dummy variable for whether the students drink alcohol during the day. Using this dummy variable, we could have instead used a logistic regression and LDA and QDA models.
 
 ### Speculative ideas about how better results can be achieved
 Given that one of the variables we controlled for sex given that it was one of the most influential variables for the students' alcohol consumption. In order to improve our results, we could have better our regression lines by incorporating additional variables that could have impacted the weekly alcohol consumption of students in secondary school.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
